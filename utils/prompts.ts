@@ -1,23 +1,21 @@
 export const reviewPrompt = (code: string) => `
-You are a senior software engineer. Carefully review the following code:
+Review this code as a senior software engineer:
 \`\`\`
 ${code}
 \`\`\`
-Give it a score out of 10 and explain any potential issues (bugs, smells, anti-patterns, etc). Provide suggestions for improvement.
+Give a score out of 10 and briefly explain any issues (bugs, smells, anti-patterns) and improvements.
 `;
 
 export const refactorPrompt = (code: string) => `
-You are an expert developer. Refactor the following code to improve readability, performance, and maintainability:
+Refactor this code for better readability, performance, and maintainability. Output only the improved code:
 \`\`\`
 ${code}
 \`\`\`
-Output only the improved code.
 `;
 
 export const explainPrompt = (code: string) => `
-You are a helpful mentor. Explain what the following code does in simple terms for a junior developer:
+Explain this code simply for a junior developer in clear, friendly language:
 \`\`\`
 ${code}
 \`\`\`
-Use clear, friendly language.
 `;

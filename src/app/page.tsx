@@ -37,9 +37,10 @@ export default function Home() {
         if (!line.trim()) continue;
         try {
           const { step, content } = JSON.parse(line);
+          const cleanContent = content.replace(/```[\s\S]*?\n|```/g, '').trim();
           setResults((prev) => ({
             ...prev!,
-            [step]: content,
+            [step]: cleanContent,
           }));
         } catch (err) {
           console.error('Failed to parse stream line:', line);
@@ -48,6 +49,26 @@ export default function Home() {
     }
 
     setLoading(false);
+  };
+
+  const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const button = event.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+    circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+    circle.classList.add('ripple');
+
+    const ripple = button.getElementsByClassName('ripple')[0];
+
+    if (ripple) {
+      ripple.remove();
+    }
+
+    button.appendChild(circle);
   };
 
   return (
@@ -66,12 +87,14 @@ export default function Home() {
           />
           <div className="flex justify-between mt-4">
             <button
-              onClick={handleRun}
+              onClick={(e) => {
+                createRipple(e);
+                handleRun();
+              }}
               disabled={loading}
-              className={`px-6 py-2 text-white rounded-lg transition ${loading
-                ? 'bg-blue-300 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
-                }`}
+              className={`relative overflow-hidden px-6 py-2 text-white rounded-lg transition ${
+                loading ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+              }`}
             >
               {loading ? 'Running Agents...' : 'Run Full Review'}
             </button>
@@ -99,6 +122,23 @@ export default function Home() {
           </>
         )}
       </div>
+      <style jsx>{`
+        .ripple {
+          position: absolute;
+          border-radius: 50%;
+          transform: scale(0);
+          animation: ripple 600ms linear;
+          background-color: rgba(255, 255, 255, 0.7);
+          pointer-events: none;
+        }
+
+        @keyframes ripple {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </main>
   );
 }
